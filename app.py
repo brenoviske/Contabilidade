@@ -58,7 +58,6 @@ def investment():
 @app.route('/depreciation_calc', methods = ['GET','POST'])
 def deprec():
 
-    valor_inicial , valor_resi , t ,dp = None
     if request.method == 'POST':
         form = request.form.to_dict()
 
@@ -73,7 +72,7 @@ def deprec():
             
             return jsonify({
                 'status':'success',
-                'message': f'Valor de depreciação(Linear Anual):{dp}'
+                'message': f'Valor de depreciação(Linear Anual):{dp:.2f}'
             })
         
         except Exception as e:
@@ -92,7 +91,6 @@ def deprec():
 @app.route('/amortization_route', methods = ['GET','POST'])
 def amortization():
 
-    c , n , A = None
 
     if request.method == 'POST':
         form = request.form.to_dict()
@@ -117,7 +115,7 @@ def amortization():
 
             return jsonify({
                 'status':'success',
-                'message':f'O valor constante amortizado é de : {A}'
+                'message':f'O valor constante amortizado é de : {A:2f}'
             })
         except Exception as e :
             print('Error message:',e)
