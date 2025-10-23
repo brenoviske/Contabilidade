@@ -15,7 +15,7 @@
     <div class="flex flex-col gap-2">
       <label for="calcType" class="text-gray-700 font-medium">Tipo de Cálculo:</label>
       <select id="calcType" class="border border-gray-300 rounded p-2">
-        <option value=""></option>Selecione uma opção</option>
+        <option value="">Selecione uma opção</option>
         <option value="investment">Investimento (Rendimento)</option>
         <option value="depreciation">Depreciação</option>
         <option value="amortization">Amortização</option>
@@ -30,9 +30,9 @@
     <section id="resultSection" class="mt-6 text-center">
       <p id="resultMessage" class="text-lg font-semibold"></p>
     </section>
-  </main>
+</main>
 
-  <script>
+<script>
     const select = document.getElementById("calcType");
     const formContainer = document.getElementById("formContainer");
     const resultMessage = document.getElementById("resultMessage");
@@ -165,6 +165,6 @@
         showResult(json);
       });
     }
-  </script>
+</script>
 </body>
 </html>
