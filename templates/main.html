@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Aplicações Financeiras</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <main class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-3xl flex flex-col gap-6">
+    <h1 class="text-3xl font-bold text-center text-green-500">Simulador Financeiro</h1>
+    <p class="text-center text-gray-600">Escolha o tipo de cálculo e insira os dados.</p>
+
+    <!-- Seleção do tipo -->
+    <div class="flex flex-col gap-2">
+      <label for="calcType" class="text-gray-700 font-medium">Tipo de Cálculo:</label>
+      <select id="calcType" class="border border-gray-300 rounded p-2">
+        <option value=""></option>Selecione uma opção</option>
+        <option value="investment">Investimento (Rendimento)</option>
+        <option value="depreciation">Depreciação</option>
+        <option value="amortization">Amortização</option>
+        <option value="realstate">Valorização de Imóvel</option>
+      </select>
+    </div>
+
+    <!-- Container onde os formulários serão renderizados -->
+    <section id="formContainer" class="mt-4"></section>
+
+    <!-- Resultado -->
+    <section id="resultSection" class="mt-6 text-center">
+      <p id="resultMessage" class="text-lg font-semibold"></p>
+    </section>
+  </main>
+
+  <script>
+    const select = document.getElementById("calcType");
+    const formContainer = document.getElementById("formContainer");
+    const resultMessage = document.getElementById("resultMessage");
+
+    select.addEventListener("change", () => {
+      const type = select.value;
+      formContainer.innerHTML = "";
+      resultMessage.textContent = "";
+
+      if (type === "investment") renderInvestmentForm();
+      else if (type === "depreciation") renderDepreciationForm();
+      else if (type === "amortization") renderAmortizationForm();
+      else if (type === "realstate") renderRealEstateForm();
+    });
+
+    // Função de exibição de resultados
+    function showResult(data) {
+      resultMessage.classList.remove("text-red-500", "text-green-600");
+
+      if (data.status === "success") {
+        resultMessage.classList.add("text-green-600");
+        resultMessage.textContent = data.message;
+      } else {
+        resultMessage.classList.add("text-red-500");
+        resultMessage.textContent = data.message || "Erro no cálculo.";
+      }
+    }
+
+    // 1️⃣ Formulário de INVESTIMENTO
+    function renderInvestmentForm() {
+      const formHTML = `
+        <form id="investmentForm" class="flex flex-col gap-3">
+          <label>Capital Inicial:</label>
+          <input type="number" step="0.01" name="investmentAmount" class="border p-2 rounded" required>
+
+          <label>Duração do Investimento (anos):</label>
+          <input type="number" step="0.1" name="investmentDuration" class="border p-2 rounded" required>
+
+          <label>Rendimento (%):</label>
+          <input type="number" step="0.01" name="rendiment" class="border p-2 rounded" required>
+
+          <button type="submit" class="bg-blue-500 text-white rounded p-2 mt-2">Calcular</button>
+        </form>
+      `;
+      formContainer.innerHTML = formHTML;
+
+      document.getElementById("investmentForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const res = await fetch("/investment_calc", { method: "POST", body: data });
+        const json = await res.json();
+        showResult(json);
+      });
+    }
+
+    // 2️⃣ Formulário de DEPRECIAÇÃO
+    function renderDepreciationForm() {
+      const formHTML = `
+        <form id="deprecForm" class="flex flex-col gap-3">
+          <label>Valor Inicial:</label>
+          <input type="number" step="0.01" name="initialValue" class="border p-2 rounded" required>
+
+          <label>Valor Residual (%):</label>
+          <input type="number" step="0.01" name="residualPercentage" class="border p-2 rounded" required>
+
+          <label>Tempo (anos):</label>
+          <input type="number" step="0.1" name="time" class="border p-2 rounded" required>
+
+          <button type="submit" class="bg-blue-500 text-white rounded p-2 mt-2">Calcular</button>
+        </form>
+      `;
+      formContainer.innerHTML = formHTML;
+
+      document.getElementById("deprecForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const res = await fetch("/depreciation_calc", { method: "POST", body: data });
+        const json = await res.json();
+        showResult(json);
+      });
+    }
+
+    // 3️⃣ Formulário de AMORTIZAÇÃO
+    function renderAmortizationForm() {
+      const formHTML = `
+        <form id="amortForm" class="flex flex-col gap-3">
+          <label>Valor Inicial (Principal):</label>
+          <input type="number" step="0.01" name="initialValue" class="border p-2 rounded" required>
+
+          <label>Número de Parcelas:</label>
+          <input type="number" name="shares" class="border p-2 rounded" required>
+
+          <button type="submit" class="bg-blue-500 text-white rounded p-2 mt-2">Calcular</button>
+        </form>
+      `;
+      formContainer.innerHTML = formHTML;
+
+      document.getElementById("amortForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const res = await fetch("/amortization_route", { method: "POST", body: data });
+        const json = await res.json();
+        showResult(json);
+      });
+    }
+
+    // 4️⃣ Formulário de VALORIZAÇÃO IMOBILIÁRIA
+    function renderRealEstateForm() {
+      const formHTML = `
+        <form id="realForm" class="flex flex-col gap-3">
+          <label>Valor Inicial do Imóvel:</label>
+          <input type="number" step="0.01" name="initialValue" class="border p-2 rounded" required>
+
+          <label>Taxa de Valorização Anual (%):</label>
+          <input type="number" step="0.01" name="appreciationRate" class="border p-2 rounded" required>
+
+          <label>Tempo (anos):</label>
+          <input type="number" step="0.1" name="years" class="border p-2 rounded" required>
+
+          <button type="submit" class="bg-blue-500 text-white rounded p-2 mt-2">Calcular</button>
+        </form>
+      `;
+      formContainer.innerHTML = formHTML;
+
+      document.getElementById("realForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const res = await fetch("/realstate_calc", { method: "POST", body: data });
+        const json = await res.json();
+        showResult(json);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Login </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <main class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <section class="bg-white p-6 rounded shadow-md">
+            <h1 class="text-xl font-bold mb-4 text-green-400">Login</h1>
+            <form action="/login" method="POST" id="loginForm">
+                <label for="username" class="block mb-2">Username:</label>
+                <input type="text" id="username" name="username" required class="border p-2 w-full mb-4">
+                <label for="password" class="block mb-2">Password:</label>
+                <input type="password" id="password" name="password" required class="border p-2 w-full mb-4">
+
+                <!-- Feedback Message -->
+                <div id="message" class="mb-4 text-center">
+                    <!-- Message will be displayed here -->
+                    <p class="text-red-600 text-[20px]" id="message"></p>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Login</button>
+            </form>
+        </section>
+    </main>
+</body>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            const message = document.getElementById('message');
+            message.classList.remove('text-red-500', 'text-green-500');
+
+            if (result.status === 'success') {
+                message.textContent = 'Login successful! Redirecting...';
+                message.classList.add('text-green-500');
+
+                // Redireciona o usuário após 1 segundo
+                setTimeout(() => {
+                    window.location.href = '/main';
+                }, 1000);
+            } else {
+                message.textContent = result.message || 'Invalid credentials';
+                message.classList.add('text-red-500');
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            const message = document.getElementById('message');
+            message.textContent = 'Server error. Please try again later.';
+            message.classList.add('text-red-500');
+        }
+    });
+</script>
+</html>
