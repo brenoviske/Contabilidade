@@ -1,2 +1,3 @@
-/env
-.env
+/env # Ignoring virtual enviroment
+.env # Ignoring enviroment variables
+.idea # Ignorting this other file right here which I dont know for what it stands for
